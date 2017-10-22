@@ -1,20 +1,74 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
+import { Button } from 'react-native-elements';
+import { MapView } from 'expo';
+import { connect } from 'react-redux';
+import * as actions from '../actions';
 
 class MapScreen extends Component {
+  state = {
+    region: {
+      longitude: -122,
+      latitude: 37,
+      longitudeDelta: 0.04,
+      latitudeDelta: 0.09
+    },
+    mapLoaded: false 
+  }
+
+  componentDidMount = () => {
+    this.setState({ mapLoaded: true });
+  }
+  
+  onRegionChangeComplete = (region) => {
+    this.setState({ region });
+  }
+
+  onButtonPress = () => {
+    this.props.fetchJobs(this.state.region, () => {
+      this.props.navigation.navigate('deck');
+    });
+  }
+
   render() {
+    if (!this.state.mapLoaded) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <ActivityIndicator size='large' />
+        </View>
+      );
+    }
+
     return (
-      <View>
-        <Text>This is the MapScreen</Text>
-        <Text>This is the MapScreen</Text>
-        <Text>This is the MapScreen</Text>
-        <Text>This is the MapScreen</Text>
-        <Text>This is the MapScreen</Text>
-        <Text>This is the MapScreen</Text>
-        <Text>This is the MapScreen</Text>
+      <View style={{ flex: 1 }}>
+        <MapView 
+          region={this.state.region}
+          style={{ flex: 1 }}
+          onRegionChangeComplete={this.onRegionChangeComplete}
+        />
+        <View style={styles.buttonContainerStyle}>
+          <Button 
+            large
+            title="Search This Area"
+            backgroundColor='#009688'
+            icon={{ name: 'search' }}
+            onPress={this.onButtonPress}
+          />
+        </View>
       </View>
     );
   }
 }
 
-export { MapScreen };
+const styles = {
+  buttonContainerStyle: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0
+  }
+};
+
+const ConnectedMapScreen = connect(null, actions)(MapScreen);
+
+export { ConnectedMapScreen as MapScreen };

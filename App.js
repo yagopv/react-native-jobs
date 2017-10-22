@@ -22,13 +22,18 @@ class App extends Component {
           map: { screen: MapScreen },
           deck: { screen: DeckScreen },
           review: {
-            screen: StackNavigator({
+            screen: StackNavigator({  
               review: { screen: ReviewScreen },
               settings: { screen: SettingsScreen }
             })
           }
         })  
       }
+    }, {
+      navigationOptions: {
+        tabBarVisible: false
+      },
+      lazy: true
     });
 
     return ( 
